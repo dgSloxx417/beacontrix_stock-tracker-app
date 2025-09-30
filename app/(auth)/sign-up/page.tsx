@@ -29,11 +29,11 @@ const SignUp = () => {
 
     const onSubmit = async (data: SignUpFormData) => {
         try {
-            console.log(data);
+            console.log('Sign in', data);
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     return (
         <>
@@ -46,16 +46,26 @@ const SignUp = () => {
                     placeholder="John Doe"
                     register={register}
                     error={errors.fullName}
-                    validation={{required: 'Full name is required', minLength: 2}}
+                    validation={{
+                        required: 'Full name is required',
+                        minLength: 2
+                    }}
                 />
 
                 <InputField
                     name="email"
                     label="Email"
                     placeholder="contact@beacontrix.com"
+                    type="email"
                     register={register}
                     error={errors.email}
-                    validation={{required: 'Email name is required', pattern: /^\w+@\w+\.\w+$/, message: 'Email address is required'}}
+                    validation={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^\w+@\w+\.\w+$/,
+                            message: 'Enter a valid email address'
+                        }
+                    }}
                 />
 
                 <InputField
@@ -65,7 +75,10 @@ const SignUp = () => {
                     type="password"
                     register={register}
                     error={errors.password}
-                    validation={{required: 'Password is required', minLength: 8}}
+                    validation={{
+                        required: 'Password is required',
+                        minLength: 8
+                    }}
                 />
 
                 <CountrySelectField
@@ -110,7 +123,7 @@ const SignUp = () => {
                     {isSubmitting ? 'Create account' : 'Start Your Investing Journey'}
                 </Button>
 
-                <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in" />
+                <FooterLink text="Already have an account?" linkText="Sign in" href="/sign-in"/>
             </form>
         </>
     )
