@@ -7,7 +7,7 @@ import {usePathname} from "next/navigation";
 const NavItems = () => {
     const pathname = usePathname()
 
-    const isActive = (path:string) => {
+    const isActive = (path: string) => {
         if (path === '/') return pathname === '/';
 
         return pathname.startsWith(path);
@@ -18,7 +18,7 @@ const NavItems = () => {
             {NAV_ITEMS.map(({ href, label }) => (
                 <li key={href}>
                     <Link href={href} className={`hover:text-yellow-500 transition-colors ${
-                       isActive(href) ? 'text-gray-100' : '' 
+                        isActive(href) ? 'text-gray-100' : ''
                     }`}>
                         {label}
                     </Link>
