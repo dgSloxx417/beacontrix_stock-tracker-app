@@ -21,7 +21,6 @@ import { Label } from '@/components/ui/label';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import countryList from 'react-select-country-list';
-import ReactCountryFlag from 'react-country-flag';
 
 type CountrySelectProps = {
     name: string;
@@ -40,8 +39,17 @@ const CountrySelect = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    // Get country options
+    // Get country options with flags
     const countries = countryList().getData();
+
+    // Helper function to get flag emoji
+    const getFlagEmoji = (countryCode: string) => {
+        const codePoints = countryCode
+            .toUpperCase()
+            .split('')
+            .map((char) => 127397 + char.charCodeAt(0));
+        return String.fromCodePoint(...codePoints);
+    };
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -54,15 +62,7 @@ const CountrySelect = ({
                 >
                     {value ? (
                         <span className='flex items-center gap-2'>
-              <ReactCountryFlag
-                  countryCode={value}
-                  svg
-                  style={{
-                      fontSize: '1.2em',
-                      lineHeight: '1em',
-                  }}
-                  aria-label={countries.find((c) => c.value === value)?.label}
-              />
+              <span>{getFlagEmoji(value)}</span>
               <span>{countries.find((c) => c.value === value)?.label}</span>
             </span>
                     ) : (
@@ -102,15 +102,7 @@ const CountrySelect = ({
                                         )}
                                     />
                                     <span className='flex items-center gap-2'>
-                    <ReactCountryFlag
-                        countryCode={country.value}
-                        svg
-                        style={{
-                            fontSize: '1.2em',
-                            lineHeight: '1em',
-                        }}
-                        aria-label={country.label}
-                    />
+                    <span>{getFlagEmoji(country.value)}</span>
                     <span>{country.label}</span>
                   </span>
                                 </CommandItem>
