@@ -105,8 +105,13 @@ export const formatArticle = (args: FormatArticleArgs) => {
     return {
         id: isCompanyNews ? Date.now() + Math.random() : article.id + index,
         headline: article.headline!.trim(),
-        summary:
-            article.summary!.trim().substring(0, isCompanyNews ? 200 : 150) + '...',
+        summary: (() => {
+            const trimmed = article.summary!.trim();
+            const maxLen = isCompanyNews ? 200 : 150;
+            return trimmed.length > maxLen
+                ? trimmed.substring(0, maxLen) + '...'
+                : trimmed;
+        })(),
         source: article.source || (isCompanyNews ? 'Company News' : 'Market News'),
         url: article.url!,
         datetime: article.datetime!,
