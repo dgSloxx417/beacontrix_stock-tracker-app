@@ -3,7 +3,8 @@
 import { NAV_ITEMS } from "@/lib/constants"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import SearchCommand, { StockWithWatchlistStatus } from "@/components/SearchCommand"
+import SearchCommand from "@/components/SearchCommand"
+import { StockWithWatchlistStatus } from "@/lib/types"   // ✅ now coming from types
 
 type NavItemsProps = {
     initialStocks: StockWithWatchlistStatus[]
@@ -20,7 +21,7 @@ const NavItems = ({ initialStocks }: NavItemsProps) => {
     return (
         <ul className="flex flex-col sm:flex-row p-2 gap-3 sm:gap-10 font-medium">
             {NAV_ITEMS.map(({ href, label }) => {
-                if (label === "Search")
+                if (label === "Search") {
                     return (
                         <li key="search-trigger">
                             <SearchCommand
@@ -30,6 +31,7 @@ const NavItems = ({ initialStocks }: NavItemsProps) => {
                             />
                         </li>
                     )
+                }
 
                 return (
                     <li key={href}>
