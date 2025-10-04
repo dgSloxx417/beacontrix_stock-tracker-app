@@ -22,7 +22,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "dotenv": "^17.2.3",
-    "inngest": "^3.44.0",
+    "inngest": "^3.44.1",
     "lucide-react": "^0.544.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.18.3",
@@ -36,6 +36,9 @@
     "react-select-country-list": "^2.2.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1"
+  },
+  "overrides": {
+    "serialize-error-cjs": "0.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
