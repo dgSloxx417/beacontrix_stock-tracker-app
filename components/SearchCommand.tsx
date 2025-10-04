@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { CommandDialog, CommandEmpty, CommandInput, CommandList } from "@/components/ui/command"
 import { Button } from "@/components/ui/button"
 import { Loader2, TrendingUp } from "lucide-react"
@@ -8,17 +8,16 @@ import Link from "next/link"
 import { searchStocks } from "@/lib/actions/finnhub.actions"
 import { useDebounce } from "@/hooks/useDebounce"
 
-// ✅ Define stock type (adjust to your real API)
-export type StockWithWatchlistStatus = {
+// ✅ Define the expected props here
+interface StockWithWatchlistStatus {
     symbol: string
     name: string
     exchange: string
     type: string
-    inWatchlist?: boolean
+    isInWatchlist?: boolean
 }
 
-// ✅ Props
-type SearchCommandProps = {
+interface SearchCommandProps {
     renderAs?: "button" | "text"
     label?: string
     initialStocks: StockWithWatchlistStatus[]
@@ -37,7 +36,6 @@ export default function SearchCommand({
     const isSearchMode = !!searchTerm.trim()
     const displayStocks = isSearchMode ? stocks : stocks?.slice(0, 10)
 
-    // ⌨️ Cmd+K / Ctrl+K shortcut
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -49,12 +47,8 @@ export default function SearchCommand({
         return () => window.removeEventListener("keydown", onKeyDown)
     }, [])
 
-    // ✅ Wrap in useCallback so it's stable
-    const handleSearch = useCallback(async () => {
-        if (!isSearchMode) {
-            setStocks(initialStocks)
-            return
-        }
+    const handleSearch = async () => {
+        if (!isSearchMode) return setStocks(initialStocks)
 
         setLoading(true)
         try {
@@ -65,14 +59,13 @@ export default function SearchCommand({
         } finally {
             setLoading(false)
         }
-    }, [isSearchMode, searchTerm, initialStocks])
+    }
 
-    // ✅ Debounced search (stable)
     const debouncedSearch = useDebounce(handleSearch, 300)
 
     useEffect(() => {
         debouncedSearch()
-    }, [searchTerm, debouncedSearch])
+    }, [searchTerm])
 
     const handleSelectStock = () => {
         setOpen(false)
@@ -85,16 +78,18 @@ export default function SearchCommand({
             {renderAs === "text" ? (
                 <span
                     onClick={() => setOpen(true)}
-                    className="search-text cursor-pointer"
+                    className="search-text cursor-pointer hover:text-yellow-400 transition-colors"
                 >
-          {label}
-        </span>
+                    {label}
+                </span>
             ) : (
-                <Button onClick={() => setOpen(true)} className="search-btn">
+                <Button
+                    onClick={() => setOpen(true)}
+                    className="search-btn cursor-pointer hover:text-yellow-400 transition-colors"
+                >
                     {label}
                 </Button>
             )}
-
             <CommandDialog open={open} onOpenChange={setOpen} className="search-dialog">
                 <div className="search-field">
                     <CommandInput
@@ -103,9 +98,8 @@ export default function SearchCommand({
                         placeholder="Search stocks..."
                         className="search-input"
                     />
-                    {loading && <Loader2 className="search-loader animate-spin" />}
+                    {loading && <Loader2 className="search-loader" />}
                 </div>
-
                 <CommandList className="search-list">
                     {loading ? (
                         <CommandEmpty className="search-list-empty">Loading stocks...</CommandEmpty>
@@ -116,14 +110,15 @@ export default function SearchCommand({
                     ) : (
                         <ul>
                             <div className="search-count">
-                                {isSearchMode ? "Search results" : "Popular stocks"} ({displayStocks?.length || 0})
+                                {isSearchMode ? "Search results" : "Popular stocks"}{" "}
+                                ({displayStocks?.length || 0})
                             </div>
                             {displayStocks?.map((stock) => (
                                 <li key={stock.symbol} className="search-item">
                                     <Link
                                         href={`/stocks/${stock.symbol}`}
                                         onClick={handleSelectStock}
-                                        className="search-item-link"
+                                        className="search-item-link cursor-pointer hover:text-yellow-400 transition-colors"
                                     >
                                         <TrendingUp className="h-4 w-4 text-gray-500" />
                                         <div className="flex-1">
