@@ -21,6 +21,7 @@ import { Label } from '@/components/ui/label';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import countryList from 'react-select-country-list';
+import ReactCountryFlag from 'react-country-flag';
 
 type CountrySelectProps = {
     name: string;
@@ -39,52 +40,51 @@ const CountrySelect = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    // Get country options with flags
+    // Get country options
     const countries = countryList().getData();
-
-    // Helper function to get flag emoji
-    const getFlagEmoji = (countryCode: string) => {
-        const codePoints = countryCode
-            .toUpperCase()
-            .split('')
-            .map((char) => 127397 + char.charCodeAt(0));
-        return String.fromCodePoint(...codePoints);
-    };
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
-                    variant='outline'
-                    role='combobox'
+                    variant="outline"
+                    role="combobox"
                     aria-expanded={open}
-                    className='country-select-trigger'
+                    className="country-select-trigger"
                 >
                     {value ? (
-                        <span className='flex items-center gap-2'>
-              <span>{getFlagEmoji(value)}</span>
+                        <span className="flex items-center gap-2">
+              <ReactCountryFlag
+                  countryCode={value}
+                  svg
+                  style={{
+                      width: '1.5em',
+                      height: '1.5em',
+                      borderRadius: '3px',
+                  }}
+              />
               <span>{countries.find((c) => c.value === value)?.label}</span>
             </span>
                     ) : (
                         'Select your country...'
                     )}
-                    <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent
-                className='w-full p-0 bg-gray-800 border-gray-600'
-                align='start'
+                className="w-full p-0 bg-gray-800 border-gray-600"
+                align="start"
             >
-                <Command className='bg-gray-800 border-gray-600'>
+                <Command className="bg-gray-800 border-gray-600">
                     <CommandInput
-                        placeholder='Search countries...'
-                        className='country-select-input'
+                        placeholder="Search countries..."
+                        className="country-select-input"
                     />
-                    <CommandEmpty className='country-select-empty'>
+                    <CommandEmpty className="country-select-empty">
                         No country found.
                     </CommandEmpty>
-                    <CommandList className='max-h-60 bg-gray-800 scrollbar-hide-default'>
-                        <CommandGroup className='bg-gray-800'>
+                    <CommandList className="max-h-60 bg-gray-800 scrollbar-hide-default">
+                        <CommandGroup className="bg-gray-800">
                             {countries.map((country) => (
                                 <CommandItem
                                     key={country.value}
@@ -93,16 +93,26 @@ const CountrySelect = ({
                                         onChange(country.value);
                                         setOpen(false);
                                     }}
-                                    className='country-select-item'
+                                    className="country-select-item"
                                 >
                                     <Check
                                         className={cn(
                                             'mr-2 h-4 w-4 text-yellow-500',
-                                            value === country.value ? 'opacity-100' : 'opacity-0'
+                                            value === country.value
+                                                ? 'opacity-100'
+                                                : 'opacity-0'
                                         )}
                                     />
-                                    <span className='flex items-center gap-2'>
-                    <span>{getFlagEmoji(country.value)}</span>
+                                    <span className="flex items-center gap-2">
+                    <ReactCountryFlag
+                        countryCode={country.value}
+                        svg
+                        style={{
+                            width: '1.5em',
+                            height: '1.5em',
+                            borderRadius: '3px',
+                        }}
+                    />
                     <span>{country.label}</span>
                   </span>
                                 </CommandItem>
@@ -123,22 +133,24 @@ export const CountrySelectField = ({
                                        required = false,
                                    }: CountrySelectProps) => {
     return (
-        <div className='space-y-2'>
-            <Label htmlFor={name} className='form-label'>
+        <div className="space-y-2">
+            <Label htmlFor={name} className="form-label">
                 {label}
             </Label>
             <Controller
                 name={name}
                 control={control}
                 rules={{
-                    required: required ? `Please select ${label.toLowerCase()}` : false,
+                    required: required
+                        ? `Please select ${label.toLowerCase()}`
+                        : false,
                 }}
                 render={({ field }) => (
                     <CountrySelect value={field.value} onChange={field.onChange} />
                 )}
             />
-            {error && <p className='text-sm text-red-500'>{error.message}</p>}
-            <p className='text-xs text-gray-500'>
+            {error && <p className="text-sm text-red-500">{error.message}</p>}
+            <p className="text-xs text-gray-500">
                 Helps us show market data and news relevant to you.
             </p>
         </div>
